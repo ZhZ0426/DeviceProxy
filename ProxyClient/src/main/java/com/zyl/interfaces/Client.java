@@ -1,6 +1,8 @@
 package com.zyl.interfaces;
 
 public interface Client {
-    void start();
-    void stop();
+
+  void start();
+
+  void stop();
 }

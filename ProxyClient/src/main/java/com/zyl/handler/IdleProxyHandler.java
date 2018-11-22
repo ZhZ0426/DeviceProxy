@@ -9,25 +9,26 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.concurrent.TimeUnit;
 
-public class IdleProxyHandler  extends IdleStateHandler{
+public class IdleProxyHandler extends IdleStateHandler {
 
-    public IdleProxyHandler(long readerIdleTime, long writerIdleTime, long allIdleTime, TimeUnit unit) {
-        super(readerIdleTime, writerIdleTime, allIdleTime, unit);
-    }
+  public IdleProxyHandler(long readerIdleTime, long writerIdleTime, long allIdleTime,
+      TimeUnit unit) {
+    super(readerIdleTime, writerIdleTime, allIdleTime, unit);
+  }
 
-    @Override
-    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
-        if(IdleState.READER_IDLE==evt.state()){
-            System.out.println("To realServer Read Timeout");
-            Message message = new Message();
-            message.setType(MessageType.BEAT);
-            ctx.channel().writeAndFlush(message);
-        }else if(IdleState.WRITER_IDLE==evt.state()){
-            System.out.println("To realServer Write Timeout");
-            Message message = new Message();
-            message.setType(MessageType.BEAT);
-            ctx.channel().writeAndFlush(message);
-        }
-        super.channelIdle(ctx, evt);
+  @Override
+  protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
+    if (IdleState.READER_IDLE == evt.state()) {
+      System.out.println("To realServer Read Timeout");
+      Message message = new Message();
+      message.setType(MessageType.BEAT);
+      ctx.channel().writeAndFlush(message);
+    } else if (IdleState.WRITER_IDLE == evt.state()) {
+      System.out.println("To realServer Write Timeout");
+      Message message = new Message();
+      message.setType(MessageType.BEAT);
+      ctx.channel().writeAndFlush(message);
     }
+    super.channelIdle(ctx, evt);
+  }
 }
