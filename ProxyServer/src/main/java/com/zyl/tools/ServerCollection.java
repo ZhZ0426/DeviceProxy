@@ -4,9 +4,7 @@ import com.zyl.interfaces.Server;
 
 import java.util.List;
 
-
 public class ServerCollection {
-
   private List<Server> serverList;
 
   public ServerCollection(List<Server> serverList) {

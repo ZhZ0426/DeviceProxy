@@ -6,7 +6,7 @@ import java.util.List;
 public class ClientCollection {
 
   public List<Client> clientList;
-  public static String clientIp = null;
+  public static String gwId = null;
 
   public ClientCollection(List<Client> clientList) {
     this.clientList = clientList;
@@ -19,5 +19,4 @@ public class ClientCollection {
   public void stopClient() {
     clientList.forEach(client -> client.stop());
   }
-
 }

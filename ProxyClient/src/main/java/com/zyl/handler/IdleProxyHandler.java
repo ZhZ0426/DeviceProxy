@@ -6,13 +6,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
-
 import java.util.concurrent.TimeUnit;
 
 public class IdleProxyHandler extends IdleStateHandler {
 
-  public IdleProxyHandler(long readerIdleTime, long writerIdleTime, long allIdleTime,
-      TimeUnit unit) {
+  public IdleProxyHandler(
+      long readerIdleTime, long writerIdleTime, long allIdleTime, TimeUnit unit) {
     super(readerIdleTime, writerIdleTime, allIdleTime, unit);
   }
 

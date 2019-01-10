@@ -13,7 +13,6 @@ import java.net.InetSocketAddress;
 
 public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
     Channel userChannel = ctx.channel();
@@ -28,7 +27,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
       Message message = new Message();
       message.setType(MessageType.LOGIN);
       message.setSignLength(0);
-      message.setSignData(new byte[]{});
+      message.setSignData(new byte[] {});
       message.setDataLength(12);
       message.setData("deviceID".getBytes());
       proxyChannel.writeAndFlush(message);
@@ -63,8 +62,5 @@ public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     message.setData(bytes);
     //     System.out.println(new String(message.getData()));
     channel.writeAndFlush(message);
-
   }
-
-
 }

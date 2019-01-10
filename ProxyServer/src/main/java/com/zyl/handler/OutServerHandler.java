@@ -12,7 +12,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.net.InetSocketAddress;
 
 public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
-
   @Override
   protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message)
       throws Exception {
@@ -32,19 +31,17 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
       default:
         break;
     }
-
   }
 
-  private void handlerBeat(ChannelHandlerContext channelHandlerContext, Message message) {
-  }
+  private void handlerBeat(ChannelHandlerContext channelHandlerContext, Message message) {}
 
   private void handlerLogin(ChannelHandlerContext channelHandlerContext, Message message) {
-    InetSocketAddress inetSocketAddress = (InetSocketAddress) channelHandlerContext.channel()
-        .localAddress();
+    InetSocketAddress inetSocketAddress =
+        (InetSocketAddress) channelHandlerContext.channel().localAddress();
     String sign = new String(message.getSignData());
     if (null == ChannelCollection.getPort(sign)) {
-      ChannelCollection
-          .putPort(sign, "" + inetSocketAddress.getPort(), channelHandlerContext.channel());
+      ChannelCollection.putPort(
+          sign, "" + inetSocketAddress.getPort(), channelHandlerContext.channel());
     } else {
       ChannelCollection.getPort(sign).config().setAutoRead(true);
     }
@@ -59,12 +56,9 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
       userChannel.writeAndFlush(byteBuf);
       userChannel.config().setAutoRead(true);
     }
-
   }
 
-  private void handlerReTran(ChannelHandlerContext channelHandlerContext, Message message) {
-
-  }
+  private void handlerReTran(ChannelHandlerContext channelHandlerContext, Message message) {}
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -90,6 +84,4 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
     super.exceptionCaught(ctx, cause);
   }
-
-
 }

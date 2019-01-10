@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
-
   private String className;
   private Map<String, String> map = new HashMap<>();
 

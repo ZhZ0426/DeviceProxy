@@ -8,19 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UrlTools {
-
   public static boolean jedgeUrl(String url) {
     return !StringUtil.isNullOrEmpty(url) && url.contains("/") && url.split("/").length >= 2;
   }
 
-
   public static Map<String, String> parse(FullHttpRequest req) throws Exception {
     Map<String, String> parmMap = new HashMap<>();
-    //无论是GET或者POST都需要解析请求头的参数
+    // 无论是GET或者POST都需要解析请求头的参数
     QueryStringDecoder decoder = new QueryStringDecoder(req.getUri());
-    decoder.parameters().entrySet().forEach(entry -> {
-      parmMap.put(entry.getKey(), entry.getValue().get(0));
-    });
+    decoder
+        .parameters()
+        .entrySet()
+        .forEach(
+            entry -> {
+              parmMap.put(entry.getKey(), entry.getValue().get(0));
+            });
     if (HttpMethod.POST == req.getMethod()) {
       byte[] bytes = new byte[req.content().readableBytes()];
       req.content().readBytes(bytes);

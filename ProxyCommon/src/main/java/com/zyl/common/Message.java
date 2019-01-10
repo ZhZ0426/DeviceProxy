@@ -1,29 +1,16 @@
 package com.zyl.common;
 
-/**
- * 自定义数据类
- */
+/** 自定义数据类 */
 public class Message {
-
-  /**
-   * 数据包类型
-   */
+  /** 数据包类型 */
   private byte type;
-  /**
-   * 传输的数据
-   */
+  /** 传输的数据 */
   private byte[] data;
-  /**
-   * 传输数据的长度
-   */
+  /** 传输数据的长度 */
   private int dataLength;
-  /**
-   * 自定义数据长度
-   */
+  /** 自定义数据长度 */
   private int signLength;
-  /**
-   * 自定义数据
-   */
+  /** 自定义数据 */
   private byte[] signData;
 
   public int getSignLength() {

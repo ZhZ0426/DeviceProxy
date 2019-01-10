@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class WebServer implements Server {
-
   private String basePackage = "com.zyl.http";
   private int port;
   private EventLoopGroup bossGroup;
@@ -35,7 +34,8 @@ public class WebServer implements Server {
     b.group(bossGroup, workerGroup)
         .channel(NioServerSocketChannel.class)
         .option(ChannelOption.SO_BACKLOG, 1024)
-        .childHandler(new WebHandler()).option(ChannelOption.SO_BACKLOG, 128)
+        .childHandler(new WebHandler())
+        .option(ChannelOption.SO_BACKLOG, 128)
         .childOption(ChannelOption.SO_KEEPALIVE, true);
     Set<Class<?>> requests = new Reflections(basePackage).getTypesAnnotatedWith(Rest.class);
     for (Class<?> cls : requests) {

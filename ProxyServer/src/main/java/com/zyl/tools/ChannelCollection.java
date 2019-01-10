@@ -1,6 +1,5 @@
 package com.zyl.tools;
 
-
 import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChannelCollection {
-
   private static volatile Map<String, Channel> ports = new HashMap<>();
   private static Map<String, String> devicePort = new HashMap<>();
 
@@ -31,7 +29,6 @@ public class ChannelCollection {
   public static Channel getPort(String device) {
     return null == ports ? null : ports.get(device);
   }
-
 
   public static JSONObject getAllDevice() {
     JSONObject json = new JSONObject();
@@ -61,6 +58,5 @@ public class ChannelCollection {
         }
       }
     }
-
   }
 }

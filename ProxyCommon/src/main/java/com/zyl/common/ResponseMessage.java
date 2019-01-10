@@ -3,7 +3,6 @@ package com.zyl.common;
 import com.alibaba.fastjson.JSONObject;
 
 public class ResponseMessage {
-
   private String msg;
   private int code;
   private JSONObject extdata;

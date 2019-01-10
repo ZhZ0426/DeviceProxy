@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertiesTools {
-
   private static final String PROPERTIES_NAME = "config.properties";
   private static Properties properties;
 

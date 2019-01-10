@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 public class IdleProxyHandler extends IdleStateHandler {
 
-  public IdleProxyHandler(long readerIdleTime, long writerIdleTime, long allIdleTime,
-      TimeUnit unit) {
+  public IdleProxyHandler(
+      long readerIdleTime, long writerIdleTime, long allIdleTime, TimeUnit unit) {
     super(readerIdleTime, writerIdleTime, allIdleTime, unit);
   }
 

@@ -7,21 +7,21 @@ import com.zyl.tools.PropertiesTools;
 import java.util.Arrays;
 
 public class ClientApplication {
-    public static void main(String[] args){
-      if (args.length == 0) {
-        System.out.println("IP地址没有捕捉到，请检查shell脚本");
-        System.exit(0);
-      }
-      ClientCollection.clientIp = args[0];
-        String serverIp = PropertiesTools.getPropertiesName("server_ip");
-        int serverPort = Integer.parseInt(PropertiesTools.getPropertiesName("server_port"));
-        ClientCollection clientCollection = new ClientCollection(Arrays.asList(new Client[]{new ProxyClient(serverIp,serverPort)}));
-        clientCollection.startClient();
-        System.out.println("客户端已启动……");
-        Runtime.getRuntime().addShutdownHook(new Thread(()->{
-            System.out.println("主线程关闭");
-            clientCollection.stopClient();
-        }));
-    }
 
+  public static void main(String[] args) {
+    ClientCollection.gwId = args.length == 1 ? args[0] : PropertiesTools.getPropertiesName("gw_id");
+    String serverIp = PropertiesTools.getPropertiesName("server_ip");
+    int serverPort = Integer.parseInt(PropertiesTools.getPropertiesName("server_port"));
+    ClientCollection clientCollection =
+        new ClientCollection(Arrays.asList(new Client[]{new ProxyClient(serverIp, serverPort)}));
+    clientCollection.startClient();
+    System.out.println("客户端已启动……");
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  System.out.println("主线程关闭");
+                  clientCollection.stopClient();
+                }));
+  }
 }

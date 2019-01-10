@@ -4,9 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
 public class Constant {
-
-  public static final AttributeKey<Channel> CHANNEL_ATTRIBUTE_KEY = AttributeKey
-      .newInstance("CHANNEL_ATTRIBUTE_KEY");
+  public static final AttributeKey<Channel> CHANNEL_ATTRIBUTE_KEY =
+      AttributeKey.newInstance("CHANNEL_ATTRIBUTE_KEY");
   public static final int INT_SIZE = 4;
   public static final int BYTE_SIZE = 1;
   public static final int TRAN_SIZE = 2 * 1024 * 1024;

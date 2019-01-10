@@ -12,9 +12,17 @@ import java.nio.ByteOrder;
 
 public class ProxyMessageDecoder extends LengthFieldBasedFrameDecoder {
 
-  public ProxyMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
-      int lengthAdjustment, int initialBytesToStrip) {
-    super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment,
+  public ProxyMessageDecoder(
+      int maxFrameLength,
+      int lengthFieldOffset,
+      int lengthFieldLength,
+      int lengthAdjustment,
+      int initialBytesToStrip) {
+    super(
+        maxFrameLength,
+        lengthFieldOffset,
+        lengthFieldLength,
+        lengthAdjustment,
         initialBytesToStrip);
   }
 

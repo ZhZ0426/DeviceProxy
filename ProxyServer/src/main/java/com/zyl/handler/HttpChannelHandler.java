@@ -16,7 +16,6 @@ import java.util.*;
 
 public class HttpChannelHandler extends ChannelInboundHandlerAdapter {
 
-
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     String responseStr = null;
@@ -49,13 +48,17 @@ public class HttpChannelHandler extends ChannelInboundHandlerAdapter {
       int contentLength = responseBytes.length;
 
       // 构造FullHttpResponse对象，FullHttpResponse包含message body
-      FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-          HttpResponseStatus.OK, Unpooled.wrappedBuffer(responseBytes));
+      FullHttpResponse response =
+          new DefaultFullHttpResponse(
+              HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(responseBytes));
       response.headers().set("Content-Type", "text/html; charset=utf-8");
       response.headers().set("Content-Length", Integer.toString(contentLength));
       response.headers().set("Access-Control-Allow-Origin", "*");
-      response.headers().set("Access-Control-Allow-Headers",
-          "Origin, X-Requested-With, Content-Type, Accept,X-Token");
+      response
+          .headers()
+          .set(
+              "Access-Control-Allow-Headers",
+              "Origin, X-Requested-With, Content-Type, Accept,X-Token");
       response.headers().set("Access-Control-Allow-Methods", "GET, POST,PUT,DELETE,OPTIONS");
 
       ctx.writeAndFlush(response);

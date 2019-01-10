@@ -1,6 +1,5 @@
 package com.zyl.tools;
 
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -10,9 +9,8 @@ import java.security.Key;
 import java.util.Map;
 
 public class JwtTools {
-
   private static Key getKeyInstance() {
-    //We will sign our JavaWebToken with our ApiKey secret
+    // We will sign our JavaWebToken with our ApiKey secret
     SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("bankgl");
     Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
@@ -20,7 +18,9 @@ public class JwtTools {
   }
 
   public static String createJavaWebToken(Map<String, Object> claims) {
-    return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, getKeyInstance())
+    return Jwts.builder()
+        .setClaims(claims)
+        .signWith(SignatureAlgorithm.HS256, getKeyInstance())
         .compact();
   }
 

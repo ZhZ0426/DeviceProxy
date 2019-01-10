@@ -37,34 +37,42 @@ public class ProxyClient implements Client {
     localBootstrap = new Bootstrap();
     bootstrap = new Bootstrap();
     localGroup = new NioEventLoopGroup();
-    localBootstrap.group(localGroup)
+    localBootstrap
+        .group(localGroup)
         .channel(NioSocketChannel.class)
-        .handler(new ChannelInitializer<SocketChannel>() {
-          @Override
-          protected void initChannel(SocketChannel socketChannel) throws Exception {
-            socketChannel.pipeline().addLast(new RealChannelHandler());
-          }
-        });
+        .handler(
+            new ChannelInitializer<SocketChannel>() {
+              @Override
+              protected void initChannel(SocketChannel socketChannel) throws Exception {
+                socketChannel.pipeline().addLast(new RealChannelHandler());
+              }
+            });
 
-    //与Server通讯的
+    // 与Server通讯的
     group = new NioEventLoopGroup();
-    bootstrap.group(group)
+    bootstrap
+        .group(group)
         .channel(NioSocketChannel.class)
         .remoteAddress(host, port)
-        .handler(new ChannelInitializer<SocketChannel>() {
-          @Override
-          protected void initChannel(SocketChannel socketChannel) throws Exception {
-            socketChannel.pipeline()
-                .addLast(
-                    new ProxyMessageDecoder(Constant.MAX_FRAME_LENGTH, Constant.LENGTH_FIELD_OFFSET,
-                        Constant.LENGTH_FIELD_LENGTH, 0, 0))
-                .addLast(new ProxyMessageEncoder())
-                .addLast(new IdleProxyHandler(60, 60, 120, TimeUnit.SECONDS))
-                .addLast(new ServerChannelHandler(localBootstrap, ProxyClient.this));
-          }
-        });
+        .handler(
+            new ChannelInitializer<SocketChannel>() {
+              @Override
+              protected void initChannel(SocketChannel socketChannel) throws Exception {
+                socketChannel
+                    .pipeline()
+                    .addLast(
+                        new ProxyMessageDecoder(
+                            Constant.MAX_FRAME_LENGTH,
+                            Constant.LENGTH_FIELD_OFFSET,
+                            Constant.LENGTH_FIELD_LENGTH,
+                            0,
+                            0))
+                    .addLast(new ProxyMessageEncoder())
+                    .addLast(new IdleProxyHandler(60, 60, 120, TimeUnit.SECONDS))
+                    .addLast(new ServerChannelHandler(localBootstrap, ProxyClient.this));
+              }
+            });
   }
-
 
   @Override
   public void start() {
@@ -72,40 +80,44 @@ public class ProxyClient implements Client {
   }
 
   public void startConnectServer() {
-    bootstrap.connect().addListener(new ChannelFutureListener() {
-      @Override
-      public void operationComplete(ChannelFuture channelFuture) throws Exception {
-        System.out.println("连接服务端中……");
-        if (channelFuture.isSuccess()) {
-          ChannelManager.setChannel(channelFuture.channel());
-          Message message = new Message();
-          message.setType(MessageType.LOGIN);
-          String sign = ClientCollection.clientIp;
-          int signLength = sign.getBytes().length;
-          message.setDataLength(signLength + 4);
-          message.setSignLength(signLength);
-          message.setSignData(sign.getBytes());
-          message.setData(new byte[]{});
-          channelFuture.channel().writeAndFlush(message);
-          System.out.println("连接成功");
-        } else {
-          System.out.println("连接超时，" + reconnectTime + "秒后重新连接……");
-          Thread.sleep(reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
-          // System.out.println("连接失败,重连中……");
-          startConnectServer();
-        }
-      }
-    });
+    bootstrap
+        .connect()
+        .addListener(
+            new ChannelFutureListener() {
+              @Override
+              public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                System.out.println("连接服务端中……");
+                if (channelFuture.isSuccess()) {
+                  ChannelManager.setChannel(channelFuture.channel());
+                  Message message = new Message();
+                  message.setType(MessageType.LOGIN);
+                  String sign = ClientCollection.gwId;
+                  int signLength = sign.getBytes().length;
+                  message.setDataLength(signLength + 4);
+                  message.setSignLength(signLength);
+                  message.setSignData(sign.getBytes());
+                  message.setData(new byte[]{});
+                  channelFuture.channel().writeAndFlush(message);
+                  System.out.println("连接成功");
+                } else {
+                  System.out.println("连接超时，" + reconnectTime + "秒后重新连接……");
+                  Thread.sleep(
+                      reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
+                  // System.out.println("连接失败,重连中……");
+                  startConnectServer();
+                }
+              }
+            });
   }
-
 
   @Override
   public void stop() {
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      localGroup.shutdownGracefully();
-      group.shutdownGracefully();
-    }));
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  localGroup.shutdownGracefully();
+                  group.shutdownGracefully();
+                }));
   }
-
-
 }

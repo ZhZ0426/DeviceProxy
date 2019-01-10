@@ -8,10 +8,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 public class ProxyMessageEncoder extends MessageToByteEncoder<Message> {
-
   @Override
-  protected void encode(ChannelHandlerContext channelHandlerContext, Message message,
-      ByteBuf byteBuf) throws Exception {
+  protected void encode(
+      ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf)
+      throws Exception {
     byteBuf.writeByte(message.getType());
     byteBuf.writeInt(message.getDataLength());
     byteBuf.writeInt(message.getSignLength());

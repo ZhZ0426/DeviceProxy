@@ -25,14 +25,13 @@ public class RealChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     byteBuf.readBytes(bytes);
     Message message = new Message();
     message.setType(MessageType.TRAN);
-    String sign = ClientCollection.clientIp;
+    String sign = ClientCollection.gwId;
     message.setSignData(sign.getBytes());
     message.setSignLength(sign.getBytes().length);
     message.setDataLength(length + 4 + sign.getBytes().length);
     message.setData(bytes);
     channel.writeAndFlush(message);
   }
-
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
