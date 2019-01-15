@@ -4,5 +4,5 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 public interface Intercepter {
 
-  boolean intercept(FullHttpRequest request);
+    boolean intercept(FullHttpRequest request);
 }

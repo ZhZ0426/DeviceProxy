@@ -9,109 +9,102 @@ import com.zyl.tools.ClientCollection;
 import com.zyl.tools.PropertiesTools;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 
 public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
 
-  private Bootstrap realBootstrap;
-  private Client client;
-  private int reconnectTime = 1;
-  private String realIp;
+    private Bootstrap realBootstrap;
+    private Client client;
+    private int reconnectTime = 1;
+    private String realIp;
 
-  public ServerChannelHandler() {
-    super();
-    realIp = PropertiesTools.getPropertiesName("real_ip");
-  }
-
-  @Override
-  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    System.out.println("服务端断开了");
-    client.start();
-    super.channelInactive(ctx);
-  }
-
-  public ServerChannelHandler(Bootstrap bootstrap, Client client) {
-    this.realBootstrap = bootstrap;
-    this.client = client;
-    realIp = PropertiesTools.getPropertiesName("real_ip");
-  }
-
-  @Override
-  protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message)
-      throws Exception {
-    switch (message.getType()) {
-      case MessageType.BEAT:
-        handleBeat(channelHandlerContext, message);
-        break;
-      case MessageType.LOGIN:
-        handleLogin(channelHandlerContext, message);
-        break;
-      case MessageType.TRAN:
-        handleTran(channelHandlerContext, message);
-        break;
-      default:
-        break;
+    public ServerChannelHandler() {
+        super();
+        realIp = PropertiesTools.getPropertiesName("real_ip");
     }
-  }
 
-  public void handleBeat(ChannelHandlerContext channelHandlerContext, Message message) {
-  }
-
-  public void handleLogin(ChannelHandlerContext channelHandlerContext, Message message) {
-    realBootstrap
-        .connect(realIp, 22)
-        .addListener(
-            new ChannelFutureListener() {
-              @Override
-              public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                System.out.println("连接真实服务端中………………");
-                if (channelFuture.isSuccess()) {
-                  System.out.println("连接真实服务端成功");
-                  ChannelManager.setRealChannel(channelFuture.channel());
-                  channelHandlerContext
-                      .channel()
-                      .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
-                      .set(channelFuture.channel());
-                  channelFuture
-                      .channel()
-                      .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
-                      .set(channelHandlerContext.channel());
-                  String sign = ClientCollection.gwId;
-                  Message mess = new Message();
-                  mess.setType(MessageType.LOGIN);
-                  mess.setSignLength(sign.getBytes().length);
-                  mess.setSignData(sign.getBytes());
-                  mess.setDataLength(9 + sign.getBytes().length);
-                  mess.setData("start".getBytes());
-                  channelHandlerContext.channel().writeAndFlush(mess);
-                } else {
-                  System.out.println("连接目的超时，" + reconnectTime + "秒后重新连接……");
-                  Thread.sleep(
-                      reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
-                  handleLogin(channelHandlerContext, message);
-                }
-              }
-            });
-  }
-
-  public void handleTran(ChannelHandlerContext channelHandlerContext, Message message) {
-    Channel channel = channelHandlerContext.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
-    ByteBuf byteBuf = channelHandlerContext.alloc().buffer(message.getDataLength());
-    byteBuf.writeBytes(message.getData());
-    channel.writeAndFlush(byteBuf);
-  }
-
-  @Override
-  public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
-    Channel realChannel = ctx.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
-    if (realChannel != null) {
-      realChannel.config().setOption(ChannelOption.AUTO_READ, ctx.channel().isWritable());
+    public ServerChannelHandler(Bootstrap bootstrap, Client client) {
+        this.realBootstrap = bootstrap;
+        this.client = client;
+        realIp = PropertiesTools.getPropertiesName("real_ip");
     }
-    super.channelWritabilityChanged(ctx);
-  }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("服务端断开了");
+        client.start();
+        super.channelInactive(ctx);
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message)
+            throws Exception {
+        switch (message.getType()) {
+            case MessageType.BEAT:
+                handleBeat(channelHandlerContext, message);
+                break;
+            case MessageType.LOGIN:
+                handleLogin(channelHandlerContext, message);
+                break;
+            case MessageType.TRAN:
+                handleTran(channelHandlerContext, message);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void handleBeat(ChannelHandlerContext channelHandlerContext, Message message) {
+    }
+
+    public void handleLogin(ChannelHandlerContext channelHandlerContext, Message message) {
+        realBootstrap
+                .connect(realIp, 22)
+                .addListener(
+                        (ChannelFutureListener)
+                                channelFuture -> {
+                                    System.out.println("连接真实服务端中………………");
+                                    if (channelFuture.isSuccess()) {
+                                        System.out.println("连接真实服务端成功");
+                                        ChannelManager.setRealChannel(channelFuture.channel());
+                                        channelHandlerContext
+                                                .channel()
+                                                .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
+                                                .set(channelFuture.channel());
+                                        channelFuture
+                                                .channel()
+                                                .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
+                                                .set(channelHandlerContext.channel());
+                                        String sign = ClientCollection.gwId;
+                                        Message mess = new Message();
+                                        mess.setType(MessageType.LOGIN);
+                                        mess.setSignLength(sign.getBytes().length);
+                                        mess.setSignData(sign.getBytes());
+                                        mess.setDataLength(9 + sign.getBytes().length);
+                                        mess.setData("start".getBytes());
+                                        channelHandlerContext.channel().writeAndFlush(mess);
+                                    } else {
+                                        System.out.println("连接目的超时，" + reconnectTime + "秒后重新连接……");
+                                        Thread.sleep(
+                                                reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
+                                        handleLogin(channelHandlerContext, message);
+                                    }
+                                });
+    }
+
+    public void handleTran(ChannelHandlerContext channelHandlerContext, Message message) {
+        Channel channel = channelHandlerContext.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
+        ByteBuf byteBuf = channelHandlerContext.alloc().buffer(message.getDataLength());
+        byteBuf.writeBytes(message.getData());
+        channel.writeAndFlush(byteBuf);
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        Channel realChannel = ctx.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
+        if (realChannel != null) {
+            realChannel.config().setOption(ChannelOption.AUTO_READ, ctx.channel().isWritable());
+        }
+        super.channelWritabilityChanged(ctx);
+    }
 }

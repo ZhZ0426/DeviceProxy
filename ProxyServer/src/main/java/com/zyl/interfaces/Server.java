@@ -1,7 +1,7 @@
 package com.zyl.interfaces;
 
 public interface Server {
-  void start();
+    void start();
 
-  void stop();
+    void stop();
 }

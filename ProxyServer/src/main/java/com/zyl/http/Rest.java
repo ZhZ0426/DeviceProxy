@@ -11,5 +11,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RUNTIME)
 public @interface Rest {
-  String value() default "";
+    String value() default "";
 }
