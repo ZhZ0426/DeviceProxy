@@ -102,7 +102,6 @@ public class ProxyClient implements Client {
                                         System.out.println("连接超时，" + reconnectTime + "秒后重新连接……");
                                         Thread.sleep(
                                                 reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
-                                        // System.out.println("连接失败,重连中……");
                                         startConnectServer();
                                     }
                                 });
@@ -110,10 +109,8 @@ public class ProxyClient implements Client {
 
     @Override
     public void stop() {
-        Runtime.getRuntime()
-                .addShutdownHook(
-                        new Thread(
-                                () -> {
+        Runtime.getRuntime().addShutdownHook(
+                        new Thread(() -> {
                                     localGroup.shutdownGracefully();
                                     group.shutdownGracefully();
                                 }));

@@ -54,10 +54,12 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
             try {
                 ServerSocket serverSocket = new ServerSocket(0);
                 port = serverSocket.getLocalPort();
+                serverSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             ChannelCollection.putPort(sign, "" + port, channelHandlerContext.channel());
+            ChannelCollection.putPort(sign,""+port);
             try {
                 serverBootstrap.bind(port).get();
             } catch (InterruptedException e) {
