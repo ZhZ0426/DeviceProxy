@@ -4,16 +4,17 @@ import com.zyl.common.Constant;
 import com.zyl.common.Message;
 import com.zyl.common.MessageType;
 import com.zyl.tools.ChannelCollection;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutionException;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
 
@@ -58,8 +59,8 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ChannelCollection.putPort(sign, "" + port, channelHandlerContext.channel());
-            ChannelCollection.putPort(sign,""+port);
+            ChannelCollection.putChannel(sign, channelHandlerContext.channel());
+            ChannelCollection.putPort(sign, port);
             try {
                 serverBootstrap.bind(port).get();
             } catch (InterruptedException e) {
@@ -97,7 +98,7 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
         Channel channel = ctx.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
         InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.localAddress();
         int port = inetSocketAddress.getPort();
-        ChannelCollection.removeByPort("" + port);
+        ChannelCollection.removeByPort(port);
         super.channelInactive(ctx);
     }
 

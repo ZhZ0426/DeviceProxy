@@ -11,6 +11,9 @@ import com.zyl.handler.ServerChannelHandler;
 import com.zyl.interfaces.Client;
 import com.zyl.tools.ChannelManager;
 import com.zyl.tools.ClientCollection;
+
+import java.util.concurrent.TimeUnit;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
@@ -18,8 +21,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
-import java.util.concurrent.TimeUnit;
 
 public class ProxyClient implements Client {
 
@@ -110,9 +111,9 @@ public class ProxyClient implements Client {
     @Override
     public void stop() {
         Runtime.getRuntime().addShutdownHook(
-                        new Thread(() -> {
-                                    localGroup.shutdownGracefully();
-                                    group.shutdownGracefully();
-                                }));
+                new Thread(() -> {
+                    localGroup.shutdownGracefully();
+                    group.shutdownGracefully();
+                }));
     }
 }

@@ -1,14 +1,15 @@
 package com.zyl.tools;
 
 import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class UrlTools {
     public static boolean jedgeUrl(String url) {

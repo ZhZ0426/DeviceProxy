@@ -7,9 +7,14 @@ import com.zyl.interfaces.Client;
 import com.zyl.tools.ChannelManager;
 import com.zyl.tools.ClientCollection;
 import com.zyl.tools.PropertiesTools;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
 

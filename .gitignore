@@ -32,3 +32,12 @@ hs_err_pid*
 *.lst
 out
 gen
+ProxyAdmin/.gitignore
+ProxyAdmin/.mvn/
+ProxyAdmin/mvnw
+ProxyAdmin/mvnw.cmd
+ProxyClient/target/
+ProxyCommon/target/
+ProxyServer/target/
+logs
+

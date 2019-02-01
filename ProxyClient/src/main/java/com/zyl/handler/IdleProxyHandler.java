@@ -2,12 +2,13 @@ package com.zyl.handler;
 
 import com.zyl.common.Message;
 import com.zyl.common.MessageType;
+
+import java.util.concurrent.TimeUnit;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.TimeUnit;
 
 public class IdleProxyHandler extends IdleStateHandler {
 

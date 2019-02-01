@@ -5,11 +5,12 @@ import com.zyl.server.ProxyServer;
 import com.zyl.server.WebServer;
 import com.zyl.tools.PropertiesTools;
 import com.zyl.tools.ServerCollection;
+
+import java.util.Arrays;
+
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
-
-import java.util.Arrays;
 
 public class ServerApplication {
     static {

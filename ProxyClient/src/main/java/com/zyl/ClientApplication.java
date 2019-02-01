@@ -28,8 +28,8 @@ public class ClientApplication {
                                 }));
     }
 
-    private static String getMACAddress()  {
-        try{
+    private static String getMACAddress() {
+        try {
             InetAddress ia = InetAddress.getLocalHost();
             // 获得网络接口对象（即网卡），并得到mac地址，mac地址存在于一个byte数组中。
             byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
@@ -46,7 +46,7 @@ public class ClientApplication {
             }
             // 把字符串所有小写字母改为大写成为正规的mac地址并返回
             return sb.toString().toUpperCase().replaceAll("-", "");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";

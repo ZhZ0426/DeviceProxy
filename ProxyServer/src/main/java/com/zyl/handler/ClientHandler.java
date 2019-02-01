@@ -4,12 +4,13 @@ import com.zyl.common.Constant;
 import com.zyl.common.Message;
 import com.zyl.common.MessageType;
 import com.zyl.tools.ChannelCollection;
+
+import java.net.InetSocketAddress;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.net.InetSocketAddress;
 
 public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
