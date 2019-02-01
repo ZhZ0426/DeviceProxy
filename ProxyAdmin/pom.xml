@@ -12,7 +12,7 @@
     <groupId>com.zyl</groupId>
     <artifactId>proxyadmin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>proxyadmin</name>
+    <name>ProxyAdmin</name>
     <description>ProxyAdmin</description>
 
     <properties>

@@ -59,8 +59,7 @@ public class ProxyServer implements Server {
                                 socketChannel
                                         .pipeline()
                                         .addFirst(new CollectionHandler())
-                                        .addLast(
-                                                new ProxyMessageDecoder(
+                                        .addLast(new ProxyMessageDecoder(
                                                         Constant.MAX_FRAME_LENGTH,
                                                         Constant.LENGTH_FIELD_OFFSET,
                                                         Constant.LENGTH_FIELD_LENGTH,

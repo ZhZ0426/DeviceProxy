@@ -52,7 +52,7 @@ public class OutServerHandler extends SimpleChannelInboundHandler<Message> {
         String sign = new String(message.getSignData());
         if (null == ChannelCollection.getPort(sign)) {
             int port = 0;
-            try {
+                try {
                 ServerSocket serverSocket = new ServerSocket(0);
                 port = serverSocket.getLocalPort();
                 serverSocket.close();

@@ -8,7 +8,6 @@ import java.util.Map;
 public class ControllerManager {
 
     private static Map<String, Controller> controllerMap = new HashMap<>();
-    private String basePackage = "com.zyl.http";
 
     public static void putController(String key, Controller controller) {
         controllerMap.put(key, controller);
