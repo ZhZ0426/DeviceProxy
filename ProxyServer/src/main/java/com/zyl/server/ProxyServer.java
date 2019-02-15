@@ -6,7 +6,7 @@ import com.zyl.common.Constant;
 import com.zyl.handler.ClientHandler;
 import com.zyl.handler.CollectionHandler;
 import com.zyl.handler.IdleProxyHandler;
-import com.zyl.handler.OutServerHandler;
+import com.zyl.handler.OutHandler;
 import com.zyl.interfaces.Server;
 
 import java.util.concurrent.TimeUnit;
@@ -46,7 +46,7 @@ public class ProxyServer implements Server {
                         new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel serverSocketChannel) throws Exception {
-                                serverSocketChannel.pipeline().addLast(new ClientHandler());
+                                serverSocketChannel.pipeline().addLast(new OutHandler());
                             }
                         });
         innerServerBootstrap
@@ -60,15 +60,15 @@ public class ProxyServer implements Server {
                                         .pipeline()
                                         .addFirst(new CollectionHandler())
                                         .addLast(new ProxyMessageDecoder(
-                                                        Constant.MAX_FRAME_LENGTH,
-                                                        Constant.LENGTH_FIELD_OFFSET,
-                                                        Constant.LENGTH_FIELD_LENGTH,
-                                                        0,
-                                                        0))
+                                                Constant.MAX_FRAME_LENGTH,
+                                                Constant.LENGTH_FIELD_OFFSET,
+                                                Constant.LENGTH_FIELD_LENGTH,
+                                                0,
+                                                0))
                                         .addLast(new ProxyMessageEncoder())
                                         .addLast(new LoggingHandler(LogLevel.ERROR))
                                         .addLast(new IdleProxyHandler(60, 60, 120, TimeUnit.SECONDS))
-                                        .addLast(new OutServerHandler(serverBootstrap));
+                                        .addLast(new ClientHandler(serverBootstrap));
                             }
                         });
         try {

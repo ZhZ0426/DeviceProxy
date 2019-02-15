@@ -5,39 +5,101 @@ import com.zyl.common.Message;
 import com.zyl.common.MessageType;
 import com.zyl.tools.ChannelCollection;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.util.concurrent.ExecutionException;
 
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class ClientHandler extends SimpleChannelInboundHandler<Message> {
+
+    private ServerBootstrap serverBootstrap;
+
+    public ClientHandler(ServerBootstrap serverBootstrap) {
+        this.serverBootstrap = serverBootstrap;
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message)
+            throws Exception {
+        switch (message.getType()) {
+            case MessageType.LOGIN:
+                handlerLogin(channelHandlerContext, message);
+                break;
+            case MessageType.BEAT:
+                handlerBeat(channelHandlerContext, message);
+                break;
+            case MessageType.TRAN:
+                handlerTran(channelHandlerContext, message);
+                break;
+            case MessageType.RE_TRAN:
+                handlerReTran(channelHandlerContext, message);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void handlerBeat(ChannelHandlerContext channelHandlerContext, Message message) {
+    }
+
+    private void handlerLogin(ChannelHandlerContext channelHandlerContext, Message message) {
+        String sign = new String(message.getSignData());
+        if (null == ChannelCollection.getPort(sign)) {
+            int port = 0;
+            try {
+                ServerSocket serverSocket = new ServerSocket(0);
+                port = serverSocket.getLocalPort();
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ChannelCollection.putChannel(sign, channelHandlerContext.channel());
+            ChannelCollection.putPort(sign, port);
+            try {
+                serverBootstrap.bind(port).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        } else {
+            ChannelCollection.getPort(sign).config().setAutoRead(true);
+        }
+    }
+
+    private void handlerTran(ChannelHandlerContext channelHandlerContext, Message message) {
+        Channel channel = channelHandlerContext.channel();
+        Channel userChannel = channel.attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
+        if (userChannel != null) {
+            ByteBuf byteBuf = channelHandlerContext.alloc().buffer(message.getDataLength());
+            byteBuf.writeBytes(message.getData());
+            userChannel.writeAndFlush(byteBuf);
+            userChannel.config().setAutoRead(true);
+        }
+    }
+
+    private void handlerReTran(ChannelHandlerContext channelHandlerContext, Message message) {
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        Channel userChannel = ctx.channel();
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) userChannel.localAddress();
-        Channel proxyChannel = ChannelCollection.getChannelByPort(inetSocketAddress.getPort());
-        proxyChannel.attr(Constant.CHANNEL_ATTRIBUTE_KEY).set(userChannel);
-        userChannel.attr(Constant.CHANNEL_ATTRIBUTE_KEY).set(proxyChannel);
-        userChannel.config().setAutoRead(false);
-        if (null == proxyChannel) {
-            userChannel.close();
-        } else {
-            Message message = new Message();
-            message.setType(MessageType.LOGIN);
-            message.setSignLength(0);
-            message.setSignData(new byte[]{});
-            message.setDataLength(12);
-            message.setData("deviceID".getBytes());
-            proxyChannel.writeAndFlush(message);
-        }
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("断开了！！！！！！！！！！！！！！");
+        Channel channel = ctx.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.localAddress();
+        int port = inetSocketAddress.getPort();
+        System.out.println("端口为：" + port);
+        ChannelCollection.removeByPort(port);
         super.channelInactive(ctx);
     }
 
@@ -47,21 +109,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf)
-            throws Exception {
-        Channel comeChannel = channelHandlerContext.channel();
-        Channel channel = comeChannel.attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
-        Message message = new Message();
-        message.setType(MessageType.TRAN);
-        message.setSignData("".getBytes());
-        message.setSignLength("".getBytes().length);
-        int length = byteBuf.readableBytes();
-        //   System.out.println("服务端数据长度"+length);
-        message.setDataLength(length + 4);
-        byte[] bytes = new byte[length];
-        byteBuf.readBytes(bytes);
-        message.setData(bytes);
-        //     System.out.println(new String(message.getData()));
-        channel.writeAndFlush(message);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
     }
 }

@@ -66,35 +66,33 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
         realBootstrap
                 .connect(realIp, 22)
                 .addListener(
-                        (ChannelFutureListener)
-                                channelFuture -> {
-                                    System.out.println("连接真实服务端中………………");
-                                    if (channelFuture.isSuccess()) {
-                                        System.out.println("连接真实服务端成功");
-                                        ChannelManager.setRealChannel(channelFuture.channel());
-                                        channelHandlerContext
-                                                .channel()
-                                                .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
-                                                .set(channelFuture.channel());
-                                        channelFuture
-                                                .channel()
-                                                .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
-                                                .set(channelHandlerContext.channel());
-                                        String sign = ClientCollection.gwId;
-                                        Message mess = new Message();
-                                        mess.setType(MessageType.LOGIN);
-                                        mess.setSignLength(sign.getBytes().length);
-                                        mess.setSignData(sign.getBytes());
-                                        mess.setDataLength(9 + sign.getBytes().length);
-                                        mess.setData("start".getBytes());
-                                        channelHandlerContext.channel().writeAndFlush(mess);
-                                    } else {
-                                        System.out.println("连接目的超时，" + reconnectTime + "秒后重新连接……");
-                                        Thread.sleep(
-                                                reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
-                                        handleLogin(channelHandlerContext, message);
-                                    }
-                                });
+                        (ChannelFutureListener) channelFuture -> {
+                            System.out.println("连接真实服务端中………………");
+                            if (channelFuture.isSuccess()) {
+                                System.out.println("连接真实服务端成功");
+                                ChannelManager.setRealChannel(channelFuture.channel());
+                                channelHandlerContext.channel()
+                                        .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
+                                        .set(channelFuture.channel());
+                                channelFuture
+                                        .channel()
+                                        .attr(Constant.CHANNEL_ATTRIBUTE_KEY)
+                                        .set(channelHandlerContext.channel());
+                                String sign = ClientCollection.gwId;
+                                Message mess = new Message();
+                                mess.setType(MessageType.LOGIN);
+                                mess.setSignLength(sign.getBytes().length);
+                                mess.setSignData(sign.getBytes());
+                                mess.setDataLength(9 + sign.getBytes().length);
+                                mess.setData("start".getBytes());
+                                channelHandlerContext.channel().writeAndFlush(mess);
+                            } else {
+                                System.out.println("连接目的超时，" + reconnectTime + "秒后重新连接……");
+                                Thread.sleep(
+                                        reconnectTime >= 10 ? (reconnectTime * 1000) : (reconnectTime++) * 1000);
+                                handleLogin(channelHandlerContext, message);
+                            }
+                        });
     }
 
     public void handleTran(ChannelHandlerContext channelHandlerContext, Message message) {

@@ -10,8 +10,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class ProxyMessageDecoder extends LengthFieldBasedFrameDecoder {
 
-    public ProxyMessageDecoder(
-            int maxFrameLength,
+    public ProxyMessageDecoder(int maxFrameLength,
             int lengthFieldOffset,
             int lengthFieldLength,
             int lengthAdjustment,
