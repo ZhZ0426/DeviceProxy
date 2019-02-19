@@ -2,7 +2,6 @@ package com.zyl;
 
 import com.zyl.interfaces.Server;
 import com.zyl.server.ProxyServer;
-import com.zyl.server.WebServer;
 import com.zyl.tools.PropertiesTools;
 import com.zyl.tools.ServerCollection;
 
@@ -21,7 +20,7 @@ public class ServerApplication {
         int serverPort = Integer.parseInt(PropertiesTools.getPropertiesName("server_port"));
         ServerCollection serverCollection =
                 new ServerCollection(
-                        Arrays.asList(new Server[]{new ProxyServer(serverPort, 10, 10), new WebServer(9999)}));
+                        Arrays.asList(new Server[]{new ProxyServer(serverPort, 10, 10)}));
         serverCollection.startServer();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> serverCollection.stopServer()));
         InternalLogger logger = InternalLoggerFactory.getInstance(ServerApplication.class);
