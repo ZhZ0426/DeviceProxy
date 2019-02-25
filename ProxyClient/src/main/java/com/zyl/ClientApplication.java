@@ -5,9 +5,13 @@ import com.zyl.interfaces.Client;
 import com.zyl.tools.ClientCollection;
 import com.zyl.tools.PropertiesTools;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 public class ClientApplication {
 
@@ -26,29 +30,63 @@ public class ClientApplication {
                                     System.out.println("主线程关闭");
                                     clientCollection.stopClient();
                                 }));
+
     }
 
     private static String getMACAddress() {
+        String macId = "";
+        InetAddress ip = null;
+        NetworkInterface ni = null;
         try {
-            InetAddress ia = InetAddress.getLocalHost();
-            // 获得网络接口对象（即网卡），并得到mac地址，mac地址存在于一个byte数组中。
-            byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
-
-            // 下面代码是把mac地址拼装成String
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < mac.length; i++) {
-                if (i != 0) {
-                    sb.append("-");
+            boolean bFindIP = false;
+            Enumeration<NetworkInterface> netInterfaces = (Enumeration<NetworkInterface>) NetworkInterface
+                    .getNetworkInterfaces();
+            while (netInterfaces.hasMoreElements()) {
+                if (bFindIP) {
+                    break;
                 }
-                // mac[i] & 0xFF 是为了把byte转化为正整数
-                String s = Integer.toHexString(mac[i] & 0xFF);
-                sb.append(s.length() == 1 ? 0 + s : s);
+                ni = (NetworkInterface) netInterfaces
+                        .nextElement();
+                // ----------特定情况，可以考虑用ni.getName判断
+                // 遍历所有ip
+                Enumeration<InetAddress> ips = ni.getInetAddresses();
+                while (ips.hasMoreElements()) {
+                    ip = (InetAddress) ips.nextElement();
+                    if (!ip.isLoopbackAddress() // 非127.0.0.1
+                            && ip.getHostAddress().matches(
+                            "(\\d{1,3}\\.){3}\\d{1,3}")) {
+                        bFindIP = true;
+                        break;
+                    }
+                }
             }
-            // 把字符串所有小写字母改为大写成为正规的mac地址并返回
-            return sb.toString().toUpperCase().replaceAll("-", "");
         } catch (Exception e) {
-            e.printStackTrace();
         }
-        return "";
+        if (null != ip) {
+            try {
+                macId = getMacFromBytes(ni.getHardwareAddress());
+            } catch (SocketException e) {
+            }
+        }
+        return macId.replaceAll("-","");
+
     }
+
+    private static String getMacFromBytes(byte[] bytes) {
+        StringBuffer mac = new StringBuffer();
+        byte currentByte;
+        boolean first = false;
+        for (byte b : bytes) {
+            if (first) {
+                mac.append("-");
+            }
+            currentByte = (byte) ((b & 240) >> 4);
+            mac.append(Integer.toHexString(currentByte));
+            currentByte = (byte) (b & 15);
+            mac.append(Integer.toHexString(currentByte));
+            first = true;
+        }
+        return mac.toString().toUpperCase();
+    }
+
 }

@@ -8,6 +8,10 @@ import com.zyl.tools.ChannelManager;
 import com.zyl.tools.ClientCollection;
 import com.zyl.tools.PropertiesTools;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -32,6 +36,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
         this.realBootstrap = bootstrap;
         this.client = client;
         realIp = PropertiesTools.getPropertiesName("real_ip");
+        if(null == realIp ){
+            realIp = getLocalIP();
+        }
     }
 
     @Override
@@ -110,4 +117,39 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
         }
         super.channelWritabilityChanged(ctx);
     }
+
+    public static String getLocalIP() {
+        String sIP = "";
+        InetAddress ip = null;
+        try {
+            boolean bFindIP = false;
+            Enumeration<NetworkInterface> netInterfaces = (Enumeration<NetworkInterface>) NetworkInterface
+                    .getNetworkInterfaces();
+            while (netInterfaces.hasMoreElements()) {
+                if (bFindIP) {
+                    break;
+                }
+                NetworkInterface ni = (NetworkInterface) netInterfaces
+                        .nextElement();
+
+                Enumeration<InetAddress> ips = ni.getInetAddresses();
+                while (ips.hasMoreElements()) {
+                    ip = (InetAddress) ips.nextElement();
+                    if (!ip.isLoopbackAddress()
+                            && ip.getHostAddress().matches(
+                            "(\\d{1,3}\\.){3}\\d{1,3}")) {
+                        bFindIP = true;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+           // OutUtil.error(IpUtil.class, e.getMessage());
+        }
+        if (null != ip) {
+            sIP = ip.getHostAddress();
+        }
+        return sIP;
+    }
+
 }

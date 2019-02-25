@@ -13,15 +13,17 @@ public class ChannelCollection {
 
     public static void putChannel(String device, Channel channel) {
         deviceChannels.put(device, channel);
+        System.out.println("添加"+device);
     }
 
     public static void putPort(String device, Integer port) {
         devicePorts.put(device, port);
+        System.out.println("添加"+device+" "+port);
     }
 
     public static Channel getChannelByPort(Integer port) {
         for (Map.Entry<String, Integer> entry : devicePorts.entrySet()) {
-            if (entry.getValue() == port) {
+            if (entry.getValue().equals(port) ) {
                 return deviceChannels.get(entry.getKey());
             }
         }

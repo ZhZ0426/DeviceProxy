@@ -56,7 +56,6 @@ public class OutHandler extends SimpleChannelInboundHandler<ByteBuf> {
         message.setSignData("".getBytes());
         message.setSignLength("".getBytes().length);
         int length = byteBuf.readableBytes();
-        //   System.out.println("服务端数据长度"+length);
         message.setDataLength(length + 4);
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
