@@ -10,6 +10,7 @@ import io.netty.channel.Channel;
 public class ChannelCollection {
     private static Map<String, Channel> deviceChannels = new ConcurrentHashMap<>();
     private static Map<String, Integer> devicePorts = new ConcurrentHashMap<>();
+    private static Map<String, String> ipDevice = new ConcurrentHashMap<>();
 
     public static void putChannel(String device, Channel channel) {
         deviceChannels.put(device, channel);
@@ -19,6 +20,15 @@ public class ChannelCollection {
     public static void putPort(String device, Integer port) {
         devicePorts.put(device, port);
         System.out.println("添加"+device+" "+port);
+    }
+
+    public static void putIp(String ip, String device) {
+        ipDevice.put(ip, device);
+        System.out.println("添加Ip" + ip + "port" + device);
+    }
+
+    public static void removeIp(String ip) {
+        removePort(ipDevice.get(ip));
     }
 
     public static Channel getChannelByPort(Integer port) {

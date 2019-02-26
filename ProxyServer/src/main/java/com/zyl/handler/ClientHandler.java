@@ -64,6 +64,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
             }
             ChannelCollection.putChannel(sign, channelHandlerContext.channel());
             ChannelCollection.putPort(sign, port);
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) channelHandlerContext.channel().remoteAddress();
+            System.out.println("远程ip为" + inetSocketAddress.getHostName());
+            ChannelCollection.putIp(inetSocketAddress.getHostName(), sign);
             try {
                 serverBootstrap.bind(port).get();
             } catch (InterruptedException e) {
@@ -103,11 +106,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("断开了！！！！！！！！！！！！！！");
-        Channel channel = ctx.channel().attr(Constant.CHANNEL_ATTRIBUTE_KEY).get();
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.localAddress();
-        int port = inetSocketAddress.getPort();
-        System.out.println("端口为：" + port);
-        ChannelCollection.removeByPort(port);
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        ChannelCollection.removeIp(socketAddress.getHostName());
         super.channelInactive(ctx);
     }
 

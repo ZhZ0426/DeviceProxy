@@ -1,5 +1,6 @@
 package com.zyl;
 
+import com.zhz.server.WebServer;
 import com.zyl.interfaces.Server;
 import com.zyl.server.ProxyServer;
 import com.zyl.tools.PropertiesTools;
@@ -21,6 +22,7 @@ public class ServerApplication {
         ServerCollection serverCollection =
                 new ServerCollection(
                         Arrays.asList(new Server[]{new ProxyServer(serverPort, 10, 10)}));
+        new WebServer(9999, "com.zyl.controller").start();
         serverCollection.startServer();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> serverCollection.stopServer()));
         InternalLogger logger = InternalLoggerFactory.getInstance(ServerApplication.class);
