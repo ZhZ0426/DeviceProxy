@@ -40,6 +40,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
             case MessageType.RE_TRAN:
                 handlerReTran(channelHandlerContext, message);
                 break;
+            case MessageType.DIS_CONNECT:
+                handlerDisConnect(channelHandlerContext, message);
+                break;
             default:
                 break;
         }
@@ -87,6 +90,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     private void handlerReTran(ChannelHandlerContext channelHandlerContext, Message message) {
     }
 
+
+    private void handlerDisConnect(ChannelHandlerContext channelHandlerContext, Message message) {
+        String sign = new String(message.getSignData());
+        ChannelCollection.removePort(sign);
+    }
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);

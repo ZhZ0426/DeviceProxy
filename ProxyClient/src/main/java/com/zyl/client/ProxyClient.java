@@ -15,6 +15,7 @@ import com.zyl.tools.ClientCollection;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -31,6 +32,7 @@ public class ProxyClient implements Client {
     private EventLoopGroup localGroup;
     private EventLoopGroup group;
     private int reconnectTime = 1;
+    private ChannelFuture channelFuture;
 
     public ProxyClient(String host, int port) {
         this.host = host;
@@ -88,6 +90,7 @@ public class ProxyClient implements Client {
                                 channelFuture -> {
                                     System.out.println("连接服务端中……");
                                     if (channelFuture.isSuccess()) {
+                                        this.channelFuture = channelFuture;
                                         ChannelManager.setChannel(channelFuture.channel());
                                         Message message = new Message();
                                         message.setType(MessageType.LOGIN);
@@ -112,8 +115,22 @@ public class ProxyClient implements Client {
     public void stop() {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
+                    logout();
                     localGroup.shutdownGracefully();
                     group.shutdownGracefully();
                 }));
+    }
+
+    private void logout() {
+        Message message = new Message();
+        message.setType(MessageType.DIS_CONNECT);
+        String sign = ClientCollection.gwId;
+        int signLength = sign.getBytes().length;
+        message.setDataLength(signLength + 4);
+        message.setSignLength(signLength);
+        message.setSignData(sign.getBytes());
+        message.setData(new byte[]{});
+        channelFuture.channel().writeAndFlush(message);
+        System.out.println("注销成功");
     }
 }
