@@ -10,7 +10,7 @@ import java.util.Enumeration;
  * @description 网络工具包
  * @time 2019/3/6 16:39
  */
-public class NetTools {
+public class NetTool {
 
     public static String getMACAddress() {
         String macId = "";

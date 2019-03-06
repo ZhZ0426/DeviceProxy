@@ -3,7 +3,7 @@ package com.zyl;
 import com.zyl.client.ProxyClient;
 import com.zyl.interfaces.Client;
 import com.zyl.tools.ClientCollection;
-import com.zyl.tools.ClientTool;
+import com.zyl.tools.NetTool;
 import com.zyl.tools.PropertiesTools;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class ClientApplication {
 
     public static void main(String[] args) {
-        ClientCollection.gwId = args.length == 1 ? args[0] : ClientTool.getMACAddress();
+        ClientCollection.gwId = args.length == 1 ? args[0] : NetTool.getMACAddress();
         String serverIp = PropertiesTools.getPropertiesName("server_ip");
         int serverPort = Integer.parseInt(PropertiesTools.getPropertiesName("server_port"));
         ClientCollection clientCollection =
@@ -27,7 +27,6 @@ public class ClientApplication {
                                 }));
 
     }
-
 
 
 }
