@@ -1,20 +1,17 @@
-package com.zyl.server;
+package com.zyl.client;
 
-import com.zyl.interfaces.Server;
-import com.zyl.tools.NetTool;
+import com.zyl.interfaces.Client;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.zookeeper.data.Stat;
 
 /**
- * @author Administrator
- * @description
- * @time 2019/3/6 16:35
+ * @author zyl
+ * @description 与注册中心交互
+ * @time 2019/3/6 17:02
  */
-public class RegistyServer implements Server {
-
+public class RegistyClient implements Client {
     private static final String ZK_ADDRESS = "192.168.10.129:2181";
     private static final String ZK_PATH = "/proxy/server";
 
@@ -28,16 +25,9 @@ public class RegistyServer implements Server {
         client.start();
         System.out.println("zk client start successfully!");
 
-        // 2.Client API test
-        // 2.1 Create node
-        String data1 = NetTool.getLocalIP();
         try {
-            Stat stat = client.checkExists().forPath(ZK_PATH);
-            if (stat == null) {
-                client.create().
-                        creatingParentsIfNeeded().
-                        forPath(ZK_PATH, data1.getBytes());
-            }
+            byte[] bytes = client.getData().forPath(ZK_PATH);
+            System.out.println("发现服务" + new String(bytes));
         } catch (Exception e) {
             e.printStackTrace();
         }

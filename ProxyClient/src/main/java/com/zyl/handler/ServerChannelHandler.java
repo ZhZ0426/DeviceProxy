@@ -6,7 +6,7 @@ import com.zyl.common.MessageType;
 import com.zyl.interfaces.Client;
 import com.zyl.tools.ChannelManager;
 import com.zyl.tools.ClientCollection;
-import com.zyl.tools.ClientTool;
+import com.zyl.tools.NetTool;
 import com.zyl.tools.PropertiesTools;
 
 import io.netty.bootstrap.Bootstrap;
@@ -33,8 +33,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
         this.realBootstrap = bootstrap;
         this.client = client;
         realIp = PropertiesTools.getPropertiesName("real_ip");
-        if(null == realIp ){
-            realIp = ClientTool.getLocalIP();
+        if (null == realIp) {
+            realIp = NetTool.getLocalIP();
         }
     }
 
@@ -114,7 +114,6 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Message> {
         }
         super.channelWritabilityChanged(ctx);
     }
-
 
 
 }
