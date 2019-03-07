@@ -1,10 +1,6 @@
 package com.zyl;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.retry.RetryNTimes;
+import com.zyl.tools.PropertiesTools;
 
 /**
  * @author Administrator
@@ -13,26 +9,15 @@ import org.apache.curator.retry.RetryNTimes;
  */
 public class RegistyApplication {
 
-    /**
-     * Zookeeper info
-     */
-    private static final String ZK_ADDRESS = "192.168.10.129:2181";
+    private static final String ZK_ADDRESS = PropertiesTools.getPropertiesName("zk_ip");
     private static final String ZK_PATH = "/proxy";
 
     public static void main(String[] args) throws Exception {
-        // 1.Connect to zk
-        CuratorFramework client = CuratorFrameworkFactory.newClient(
-                ZK_ADDRESS,
-                new RetryNTimes(10, 5000)
-        );
-        client.start();
-        System.out.println("zk client start successfully!");
-
-        // 2.Register watcher
+       /* CuratorFramework client = ZookeeperClient.getInstance(ZK_ADDRESS);
         PathChildrenCache watcher = new PathChildrenCache(
                 client,
                 ZK_PATH,
-                true    // if cache data
+                false
         );
         watcher.getListenable().addListener((client1, event) -> {
             ChildData data = event.getData();
@@ -49,7 +34,7 @@ public class RegistyApplication {
         watcher.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         System.out.println("Register zk watcher successfully!");
 
-        Thread.sleep(Integer.MAX_VALUE);
+        Thread.sleep(Integer.MAX_VALUE);*/
 
     }
 

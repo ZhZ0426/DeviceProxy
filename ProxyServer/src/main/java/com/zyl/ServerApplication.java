@@ -1,6 +1,5 @@
 package com.zyl;
 
-import com.zhz.server.WebServer;
 import com.zyl.interfaces.Server;
 import com.zyl.server.ProxyServer;
 import com.zyl.server.RegistyServer;
@@ -21,7 +20,7 @@ public class ServerApplication {
         ServerCollection serverCollection =
                 new ServerCollection(
                         Arrays.asList(new Server[]{new ProxyServer(serverPort, 10, 10), new RegistyServer()}));
-        new WebServer(9999, "com.zyl.controller").start();
+        //  new WebServer(9999, "com.zyl.controller").start();
         serverCollection.startServer();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> serverCollection.stopServer()));
         logger.info("服务端已启动");

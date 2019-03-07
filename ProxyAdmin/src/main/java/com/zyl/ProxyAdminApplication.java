@@ -1,19 +1,21 @@
 package com.zyl;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import com.zhz.server.WebServer;
+import com.zyl.server.GatewayServer;
+import com.zyl.server.ListenServer;
 
 /**
  * @Author: zyl
  * @Description Admin启动类
  * @Date 11:48 2019/2/1
  */
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class ProxyAdminApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProxyAdminApplication.class, args);
+
+        new GatewayServer().start();
+        new WebServer(9999, "com.zyl.controller").start();
+        new ListenServer().start();
     }
 
 }

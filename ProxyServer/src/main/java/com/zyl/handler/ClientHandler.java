@@ -1,9 +1,17 @@
 package com.zyl.handler;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zyl.common.Constant;
 import com.zyl.common.Message;
 import com.zyl.common.MessageType;
 import com.zyl.tools.ChannelCollection;
+import com.zyl.tools.NetTool;
+import com.zyl.tools.PropertiesTools;
+import com.zyl.tools.ZookeeperClient;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.curator.framework.CuratorFramework;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,6 +26,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
+    private static final String ZK_ADDRESS = PropertiesTools.getPropertiesName("zk_ip");
+    private static final String ZK_PATH = "/proxy/available";
     private ServerBootstrap serverBootstrap;
 
     public ClientHandler(ServerBootstrap serverBootstrap) {
@@ -63,6 +73,25 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                 e.printStackTrace();
             }
             ChannelCollection.putChannel(sign, channelHandlerContext.channel());
+            /**
+             * 添加到zk
+             */
+            CuratorFramework client = ZookeeperClient.getInstance(ZK_ADDRESS);
+            try {
+                byte[] bytes = client.getData().forPath(ZK_PATH);
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("ip", NetTool.getLocalIP());
+                jsonObject.put("port", port);
+                jsonObject.put("sign", sign);
+                if (bytes.length > 0 && !StringUtils.isNotBlank(new String(bytes))) {
+                    jsonArray = JSONArray.parseArray(new String(bytes));
+                }
+                jsonArray.add(jsonObject);
+                client.setData().forPath(ZK_PATH, jsonArray.toString().getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             ChannelCollection.putPort(sign, port);
             InetSocketAddress inetSocketAddress = (InetSocketAddress) channelHandlerContext.channel().remoteAddress();
             System.out.println("远程ip为" + inetSocketAddress.getHostName());
@@ -98,6 +127,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
         String sign = new String(message.getSignData());
         ChannelCollection.removePort(sign);
     }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
