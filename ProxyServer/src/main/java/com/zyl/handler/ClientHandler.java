@@ -12,6 +12,7 @@ import com.zyl.tools.ZookeeperClient;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -78,17 +79,25 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
              */
             CuratorFramework client = ZookeeperClient.getInstance(ZK_ADDRESS);
             try {
-                byte[] bytes = client.getData().forPath(ZK_PATH);
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("ip", NetTool.getLocalIP());
                 jsonObject.put("port", port);
                 jsonObject.put("sign", sign);
-                if (bytes.length > 0 && !StringUtils.isNotBlank(new String(bytes))) {
-                    jsonArray = JSONArray.parseArray(new String(bytes));
+                Stat stat = client.checkExists().forPath(ZK_PATH);
+                if (stat == null) {
+                    jsonArray.add(jsonObject);
+                    client.create().
+                            creatingParentsIfNeeded().
+                            forPath(ZK_PATH, jsonArray.toString().getBytes());
+                }else {
+                    byte[] bytes = client.getData().forPath(ZK_PATH);
+                    if (bytes.length > 0 && !StringUtils.isNotBlank(new String(bytes))) {
+                        jsonArray = JSONArray.parseArray(new String(bytes));
+                    }
+                    jsonArray.add(jsonObject);
+                    client.setData().forPath(ZK_PATH, jsonArray.toString().getBytes());
                 }
-                jsonArray.add(jsonObject);
-                client.setData().forPath(ZK_PATH, jsonArray.toString().getBytes());
             } catch (Exception e) {
                 e.printStackTrace();
             }

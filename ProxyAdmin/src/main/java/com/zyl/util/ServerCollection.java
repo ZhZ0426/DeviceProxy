@@ -36,7 +36,7 @@ public class ServerCollection {
     }
 
     public static void addServer(JSONArray jsonArray) {
-        serverArray.add(jsonArray);
+        serverArray = jsonArray;
     }
 
     public static JSONArray getAllServer() {
